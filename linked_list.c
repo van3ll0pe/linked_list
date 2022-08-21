@@ -107,15 +107,23 @@ void addElement_nPosition(Linked_list **linked_list, int value, int nPosition) {
         printf("no position valid\n");
     } else {
         Linked_list *element = malloc(sizeof(Linked_list) * 1);
-        Linked_list *tmp = (*linked_list);
         element->i = value;
 
-        for (int i = 1; i < nPosition; i++) {
-            tmp = tmp->next;
-        }
+        if (*linked_list == NULL || nPosition == 0)
+        {
+            element->next = (*linked_list)->next;
+            (*linked_list) = element;
 
-        element->next = tmp->next;
-        tmp->next = element;
+        }
+        else {
+            Linked_list *tmp = (*linked_list);
+            for (int i = 1; i < nPosition; i++) {
+                tmp = tmp->next;
+            }
+
+            element->next = tmp->next;
+            tmp->next = element;
+        } 
     }
 }
 
@@ -123,15 +131,23 @@ void removeElement_nPosition(Linked_list **linked_list, int nPosition) {
     if (nPosition < 0 || nPosition >= nbrElement(linked_list)) {
         printf("no position valid\n");
     } else {
-        Linked_list *tmp = (*linked_list);
-        Linked_list *tmp_before;
-        for (int i = 1; i < nPosition; i++) {
-            tmp_before = tmp;
-            tmp = tmp->next;
+        if (nPosition != 0 && (*linked_list) != NULL) {
+            Linked_list *tmp = (*linked_list);
+            Linked_list *tmp_before = tmp;
+            for (int i = 1; i < nPosition; i++) {
+                tmp_before = tmp;
+                tmp = tmp->next;
+            }
+            tmp_before->next = tmp->next;
+            free(tmp);
         }
-
-        tmp_before->next = tmp->next;
-        free(tmp);
-
+        else if (nPosition == 0 && (*linked_list) != NULL){
+            Linked_list *tmp = (*linked_list);
+            (*linked_list) = (*linked_list)->next;
+            free(tmp);
+        }
+        else {
+            return ;
+        }
     }
 }
