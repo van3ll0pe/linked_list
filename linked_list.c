@@ -1,21 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-typedef struct Linked_list {
-    int i;
-    struct Linked_list *next;
-}Linked_list;
-
-void addElement_end(Linked_list **linked_list, int value);
-void removeElement_end(Linked_list **linked_list);
-int nbrElement(Linked_list **linked_list);
-void removeElement_top(Linked_list **linked_list);
-void addElement_top(Linked_list **linked_list, int value);
-void printElement(Linked_list **linked_list, int nPosition);
-void addElement_nPosition(Linked_list **linked_list, int value, int nPosition);
-void removeElement_nPosition(Linked_list **linked_list, int nPosition);
-
+#include "linked_list.h"
 
 
 void addElement_top(Linked_list **linked_list, int value) { //add a new element of the 
@@ -53,18 +36,24 @@ int nbrElement(Linked_list **linked_list) { //function to give the number of ele
 
 void removeElement_end(Linked_list **linked_list) {//function to remove the last element of the linked last
         if (*linked_list != NULL) {
-            Linked_list *element = (*linked_list);
-            Linked_list *tmp = (*linked_list);
-            while (element->next != NULL) {
-                element = element->next;
-            }
+            if (nbrElement(linked_list) == 1) {
+                free((*linked_list));
+                (*linked_list) = NULL;
+            } else {
+                Linked_list *element = (*linked_list);
+                Linked_list *tmp = (*linked_list);
+                while (element->next != NULL) {
+                    element = element->next;
+                }
 
-            while (tmp->next != element) {
-                tmp = tmp->next;
-            }
+                while (tmp->next != element) {
+                    tmp = tmp->next;
+                }
 
-            tmp->next = element->next;
-            free(element);
+                tmp->next = element->next;
+                free(element);
+            }
+            
         }
 }
 
@@ -103,17 +92,21 @@ void printElement(Linked_list **linked_list, int nPosition) {
 }
 
 void addElement_nPosition(Linked_list **linked_list, int value, int nPosition) {
-    if (nPosition < 0 || nPosition >= nbrElement(linked_list)) {
+    if (nPosition < 0 || nPosition > nbrElement(linked_list)) {
         printf("no position valid\n");
     } else {
         Linked_list *element = malloc(sizeof(Linked_list) * 1);
         element->i = value;
 
-        if (*linked_list == NULL || nPosition == 0)
+        if (*linked_list == NULL && nPosition == 0)
         {
-            element->next = (*linked_list)->next;
+            element->next = NULL;
             (*linked_list) = element;
 
+        }
+        else if (*linked_list != NULL && nPosition == 0) {
+            element->next = (*linked_list);
+            (*linked_list) = element;
         }
         else {
             Linked_list *tmp = (*linked_list);
